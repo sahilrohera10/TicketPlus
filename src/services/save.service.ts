@@ -1,5 +1,5 @@
 const save_lists = require("../../db/models/save_lists");
-export async function Save(user_id: any, event_id: any) {
+export async function SAVE(user_id: any, event_id: any) {
     try {
 
         const save_data: any = await save_lists.create({
@@ -12,8 +12,9 @@ export async function Save(user_id: any, event_id: any) {
 
     }
 }
-export async function GET_Save(user_id: any) {
+export async function GET_SAVE(user_id: any) {
     try {
+        
         const save_data = await save_lists.findAll({
             where: { user_id },
 
@@ -24,7 +25,7 @@ export async function GET_Save(user_id: any) {
 
     }
 }
-export async function Delete_Save(user_id: any,event_id:any) {
+export async function DELETE_SAVE(user_id: any,event_id:any) {
     try {
         const result = await save_lists.destroy({
             where: { user_id, event_id },
