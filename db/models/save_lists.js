@@ -1,10 +1,9 @@
 "use strict";
 const { Model, Sequelize } = require("sequelize");
-
 const sequelize = require("../../config/database");
 
 module.exports = sequelize.define(
-  "payments",
+  "save_lists",
   {
     id: {
       allowNull: false,
@@ -12,17 +11,11 @@ module.exports = sequelize.define(
       primaryKey: true,
       type: Sequelize.INTEGER,
     },
-    action_id: {
+    user_id: {
       type: Sequelize.INTEGER,
     },
-    action_type: {
-      type: Sequelize.ENUM("Booking", "Event"),
-    },
-    transaction_id: {
-      type: Sequelize.STRING,
-    },
-    date_of_payment: {
-      type: Sequelize.DATE,
+    event_id: {
+      type: Sequelize.INTEGER,
     },
     createdAt: {
       allowNull: false,
@@ -34,6 +27,6 @@ module.exports = sequelize.define(
     },
   },
   {
-    modelName: "payments",
+    modelName: "save_lists",
   }
 );
