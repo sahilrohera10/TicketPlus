@@ -1,5 +1,7 @@
 import express from "express";
+
 const db = require("../config/dbConnect.js");
+
 const app = express();
 require("dotenv").config({ path: `${process.cwd()}/.env` });
 const userRoute = require("../src/routes/user.route");
