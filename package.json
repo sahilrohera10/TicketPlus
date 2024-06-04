@@ -32,6 +32,7 @@
     "db-migrate-pg": "^1.5.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "mongoose": "^8.4.1",
     "nodemon": "^3.1.2",
     "pg": "^8.11.5",
     "pg-hstore": "^2.3.4",
