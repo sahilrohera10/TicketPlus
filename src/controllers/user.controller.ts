@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 const users = require("../../db/models/users");
+
+
 export function register_user(req: Request, res: Response) {
   try {
     console.log("body=>", req.body);
