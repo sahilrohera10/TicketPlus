@@ -1,5 +1,21 @@
 import { Request, Response } from "express";
 import { MAKE_PAYMENT } from "../services/payments.service";
+const { Queue } = require("bullmq");
+
+const email_queue = new Queue("email-queue", {
+  connection: {
+    host: "localhost",
+    port: 6379,
+  },
+});
+
+async function init() {
+  const res = await email_queue.add("booking confirmed", {
+    email: "sahilrohera10@gmail.com",
+    msg: "booking confirmed",
+  });
+  console.log("Message added into the queue => ", res.id);
+}
 
 export async function make_a_payment(req: Request, res: Response) {
   try {
@@ -8,6 +24,12 @@ export async function make_a_payment(req: Request, res: Response) {
 
     const pay = await MAKE_PAYMENT(Body);
 
+    // update payment status of the particular booking
+
+    // i have booking id
+    // call get a booked ticket service which returns a booked ticket
+    // add this message into the queue to send a mail with a ticket
+    init();
     return res.status(200).json({ msg: "Payment done successfully", pay });
   } catch (error) {
     console.log("Error in payment =>", error);
