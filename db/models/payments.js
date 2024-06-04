@@ -1,26 +1,39 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class payments extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
+"use strict";
+const { Model, Sequelize } = require("sequelize");
+
+const sequelize = require("../../config/database");
+
+module.exports = sequelize.define(
+  "payments",
+  {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+    },
+    action_id: {
+      type: Sequelize.INTEGER,
+    },
+    action_type: {
+      type: Sequelize.ENUM("Booking", "Event"),
+    },
+    transaction_id: {
+      type: Sequelize.STRING,
+    },
+    date_of_payment: {
+      type: Sequelize.DATE,
+    },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+    },
+  },
+  {
+    modelName: "payments",
   }
-  payments.init({
-    action_id: DataTypes.INTEGER,
-    action_type: DataTypes.ENUM,
-    transaction_id: DataTypes.STRING,
-    date_of_payment: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'payments',
-  });
-  return payments;
-};
+);
