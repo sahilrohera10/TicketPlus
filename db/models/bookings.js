@@ -1,28 +1,45 @@
 "use strict";
-const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
-  class bookings extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
-  }
-  bookings.init(
-    {
-      user_id: DataTypes.INTEGER,
-      event_id: DataTypes.INTEGER,
-      num_of_seats: DataTypes.INTEGER,
-      subtotal: DataTypes.INTEGER,
-      payment_status: DataTypes.ENUM,
+const { Model, Sequelize } = require("sequelize");
+const sequelize = require("../../config/database");
+
+const bookings = sequelize.define(
+  "bookings",
+  {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER,
     },
-    {
-      sequelize,
-      modelName: "bookings",
-    }
-  );
-  return bookings;
-};
+    user_id: {
+      type: Sequelize.INTEGER,
+    },
+    event_id: {
+      type: Sequelize.INTEGER,
+    },
+    num_of_seats: {
+      type: Sequelize.INTEGER,
+    },
+    subtotal: {
+      type: Sequelize.INTEGER,
+    },
+    payment_status: {
+      type: Sequelize.ENUM("PENDING", "CONFIRMED", "CANCELLED"),
+    },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+    },
+  },
+  { 
+    modelName: "bookings",
+  }
+);
+
+bookings.belongsTo(sequelize.models.users, { foreignKey: "user_id" });
+bookings.belongsTo(sequelize.models.events, { foreignKey: "event_id" });
+module.exports = bookings
