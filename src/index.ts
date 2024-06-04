@@ -13,7 +13,6 @@ app.use(express.json());
 
 app.use("/v1/api/user", userRoute);
 app.use("/v1/api/event", eventRoute);
-app.use("/v1/api/save", saveRoute);
 
 app.use("/v1/api/payment", paymentRoute);
 
