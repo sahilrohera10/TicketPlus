@@ -1,36 +1,81 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class events extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
-  }
-  events.init({
-    title: DataTypes.STRING,
-    hosted_by: DataTypes.INTEGER,
-    thumbnail_url: DataTypes.STRING,
-    banner_url: DataTypes.STRING,
-    ticket_price: DataTypes.INTEGER,
-    tax_percet: DataTypes.ENUM,
-    capacity: DataTypes.INTEGER,
-    is_taxable: DataTypes.BOOLEAN,
-    max_tickets_available: DataTypes.INTEGER,
-    genre: DataTypes.ENUM,
-    date_of_event: DataTypes.DATE,
-    duration: DataTypes.INTEGER,
-    time_of_event: DataTypes.TIME,
-    payment_status: DataTypes.ENUM
-  }, {
-    sequelize,
+
+"use strict";
+const { Model, Sequelize } = require("sequelize");
+const sequelize = require("../../config/database");
+
+module.exports = sequelize.define(
+   "events",
+   {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+    },
+    title: {
+      type: Sequelize.STRING,
+    },
+    hosted_by: {
+      type: Sequelize.INTEGER,
+    },
+    thumbnail_url: {
+      type: Sequelize.STRING,
+    },
+    banner_url: {
+      type: Sequelize.STRING,
+    },
+    ticket_price: {
+      type: Sequelize.INTEGER,
+    },
+    tax_percet: {
+      type: Sequelize.ENUM("2.5", "5", "9"),
+    },
+    capacity: {
+      type: Sequelize.INTEGER,
+    },
+    is_taxable: {
+      type: Sequelize.BOOLEAN,
+    },
+    max_tickets_available: {
+      type: Sequelize.INTEGER,
+    },
+    genre: {
+      type: Sequelize.ENUM(
+        "Comedy",
+        "Music",
+        "Dance",
+        "Gaming",
+        "Theatre & Art",
+        "Workshops",
+        "Health & Wellness",
+        "Kids",
+        "Talks"
+      ),
+    },
+    date_of_event: {
+      type: Sequelize.DATE,
+    },
+    duration: {
+      type: Sequelize.INTEGER,
+    },
+    time_of_event: {
+      type: Sequelize.TIME,
+    },
+    payment_status: {
+      type: Sequelize.ENUM("PENDING", "CONFIRMED", "CANCELLED"),
+    },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+    },
+  },
+  {
     modelName: 'events',
-  });
-  return events;
-};
+
+  }
+  
+);
