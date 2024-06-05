@@ -4,6 +4,9 @@ require("dotenv").config({ path: `${process.cwd()}/.env` });
 // Create a Redis client instance
 export const client = createClient({
   url: process.env.REDIS_URL,
+  socket: {
+    connectTimeout: 60000, // Increase the timeout to 60 seconds (adjust as needed)
+  },
 });
 
 console.log("Running Redis file");
