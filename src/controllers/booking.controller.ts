@@ -45,7 +45,7 @@ export async function get_all_bookings(req: Request, res: Response) {
     return res.status(200).json({
       status: "Success",
       message: "Fetched All Bookings Successfully",
-      count: bookings.lenght,
+      count: bookings.length,
       data: bookings,
     });
   } catch (error) {

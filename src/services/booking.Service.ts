@@ -1,8 +1,15 @@
+const { client } = require("../../config/redisCache");
+
 const events = require("../../db/models/events");
 const bookings = require("../../db/models/bookings");
 const users = require("../../db/models/users");
-const sequelize = require("../../config/database.js")
-export async function CREATE_BOOKING(user_id: string, event_id: string, num_of_seats: number) {
+const sequelize = require("../../config/database.js");
+
+export async function CREATE_BOOKING(
+  user_id: string,
+  event_id: string,
+  num_of_seats: number
+) {
   const transaction = await sequelize.transaction(); // Start a transaction
   try {
     const event = await events.findByPk(event_id, { transaction });
@@ -26,13 +33,16 @@ export async function CREATE_BOOKING(user_id: string, event_id: string, num_of_s
 
     subtotal = Math.round(subtotal);
 
-    const booking_event = await bookings.create({
-      user_id,
-      event_id,
-      num_of_seats,
-      subtotal,
-      payment_status: "PENDING",
-    }, { transaction });
+    const booking_event = await bookings.create(
+      {
+        user_id,
+        event_id,
+        num_of_seats,
+        subtotal,
+        payment_status: "PENDING",
+      },
+      { transaction }
+    );
 
     event.max_tickets_available -= num_of_seats;
     await event.save({ transaction });
@@ -72,6 +82,7 @@ export async function GET_BOOKED_TICKET(booking_id: any) {
       total_amt: booking.subtotal,
       booked_at: booking.createdAt,
       name: user.name,
+      email: user.email,
     };
 
     console.log("ticket=>", ticket);
@@ -84,11 +95,23 @@ export async function GET_BOOKED_TICKET(booking_id: any) {
 
 export async function GET_ALL_BOOKINGS(user_id: string) {
   try {
-    const booking_ticket_list = bookings.findAll({
+    const cachedData = await client.get(user_id);
+
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
+    // Else look into db
+    const booking_ticket_list = await bookings.findAll({
       where: {
-        user_id: user_id
-      }
+        user_id: user_id,
+      },
     });
+
+    // Save into cache
+    await client.setEx(user_id, 1440, JSON.stringify(booking_ticket_list));
+
+    // Return
     return booking_ticket_list;
   } catch (error: any) {
     console.log("error in serv->", error);
