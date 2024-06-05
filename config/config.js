@@ -2,12 +2,17 @@ require("dotenv").config({ path: `${process.cwd()}/.env` });
 
 module.exports = {
   development: {
-    username: "postgres",
-    password: "sahil1809",
-    database: "ticket_plus",
-    host: "localhost",
-    port: 5432,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   },
   test: {
     username: "root",
