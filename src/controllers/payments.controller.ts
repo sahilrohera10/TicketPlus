@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { MAKE_PAYMENT } from "../services/payments.service";
 const { Queue } = require("bullmq");
+require("dotenv").config({ path: `${process.cwd()}/.env` });
+
+import IORedis from "ioredis";
+
+const connection = new IORedis(process.env.REDIS_BULLMQ_URL || "", {
+  maxRetriesPerRequest: null,
+});
 
 const email_queue = new Queue("email-queue", {
-  connection: {
-    host: "localhost",
-    port: 6379,
-  },
+  connection,
 });
 
 async function init() {

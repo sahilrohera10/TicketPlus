@@ -37,9 +37,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var bullmq_1 = require("bullmq");
+var ioredis_1 = require("ioredis");
+require("dotenv").config({ path: "".concat(process.cwd(), "/.env") });
 var send_mail = function () {
     return new Promise(function (resolve, reject) { return setTimeout(function () { return resolve(); }, 5 * 1000); });
 };
+console.log("bullmq=>", process.env.REDIS_BULLMQ_URL);
+var connection = new ioredis_1.default(process.env.REDIS_BULLMQ_URL || "", {
+    maxRetriesPerRequest: null,
+});
 var worker = new bullmq_1.Worker("email-queue", function (job) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -54,8 +60,5 @@ var worker = new bullmq_1.Worker("email-queue", function (job) { return __awaite
         }
     });
 }); }, {
-    connection: {
-        host: "localhost",
-        port: 6379,
-    },
+    connection: connection,
 });
