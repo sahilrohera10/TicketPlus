@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { SAVE,GET_SAVE,DELETE_SAVE} from "../services/save.service";
-const save_lists = require("../../db/models/save_lists");
+
 export async function save(req: Request, res: Response) {
   try {
     const { user_id, event_id } = req.body;
