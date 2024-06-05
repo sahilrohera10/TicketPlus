@@ -1,41 +1,46 @@
 const events = require("../../db/models/events");
 const bookings = require("../../db/models/bookings");
 const users = require("../../db/models/users");
-export async function CREATE_BOOKING(
-  user_id: string,
-  event_id: string,
-  num_of_seats: number
-) {
+const sequelize = require("../../config/database.js")
+export async function CREATE_BOOKING(user_id: string, event_id: string, num_of_seats: number) {
+  const transaction = await sequelize.transaction(); // Start a transaction
   try {
-    const event = await events.findByPk(event_id);
+    const event = await events.findByPk(event_id, { transaction });
     if (!event) {
       throw new Error("Event not found");
     }
-    console.log("event->", event);
-    const total = event.ticket_price * num_of_seats;
-    console.log("total->", total);
 
+    const total_tickets_available = event.max_tickets_available;
+    if (num_of_seats > total_tickets_available) {
+      throw new Error("Not Enough Seats, Please choose less seats");
+    }
+
+    const total = event.ticket_price * num_of_seats;
     let subtotal = total;
+
     if (event.is_taxable) {
       const taxPercentage = parseFloat(event.tax_percet);
-      console.log("taxPercentage=>", taxPercentage);
       const taxAmount = total * (taxPercentage / 100);
-      console.log("taxAmount=>", taxAmount);
-
       subtotal += taxAmount;
     }
+
     subtotal = Math.round(subtotal);
-    console.log("subtotal=>", subtotal);
+
     const booking_event = await bookings.create({
       user_id,
       event_id,
       num_of_seats,
       subtotal,
       payment_status: "PENDING",
-    });
-    console.log("booking_event->", booking_event);
+    }, { transaction });
+
+    event.max_tickets_available -= num_of_seats;
+    await event.save({ transaction });
+
+    await transaction.commit(); // Commit the transaction if all operations are successful
     return booking_event;
   } catch (error: any) {
+    await transaction.rollback(); // Rollback the transaction in case of any error
     console.log("error in serv->", error);
     throw new Error(error);
   }
@@ -71,6 +76,20 @@ export async function GET_BOOKED_TICKET(booking_id: any) {
 
     console.log("ticket=>", ticket);
     return ticket;
+  } catch (error: any) {
+    console.log("error in serv->", error);
+    throw new Error(error);
+  }
+}
+
+export async function GET_ALL_BOOKINGS(user_id: string) {
+  try {
+    const booking_ticket_list = bookings.findAll({
+      where: {
+        user_id: user_id
+      }
+    });
+    return booking_ticket_list;
   } catch (error: any) {
     console.log("error in serv->", error);
     throw new Error(error);
