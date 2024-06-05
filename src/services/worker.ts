@@ -1,8 +1,15 @@
 import { Worker } from "bullmq";
 import { send } from "process";
+import IORedis from "ioredis";
+require("dotenv").config({ path: `${process.cwd()}/.env` });
 
 const send_mail = () =>
   new Promise<void>((resolve, reject) => setTimeout(() => resolve(), 5 * 1000));
+
+console.log("bullmq=>", process.env.REDIS_BULLMQ_URL);
+const connection = new IORedis(process.env.REDIS_BULLMQ_URL || "", {
+  maxRetriesPerRequest: null,
+});
 
 const worker = new Worker(
   "email-queue",
@@ -13,9 +20,6 @@ const worker = new Worker(
     console.log("Email sent ....");
   },
   {
-    connection: {
-      host: "localhost",
-      port: 6379,
-    },
+    connection,
   }
 );
