@@ -1,4 +1,4 @@
-const save_lists = require("../../db/models/save_lists");
+const save_lists = require("../../db/models/save_list.js");
 export async function SAVE(user_id: any, event_id: any) {
     try {
 
